@@ -5,6 +5,7 @@ import QtWebKit 3.0
 
 ApplicationWindow {
     visible: true
+    title: "Moa"
     width: 600
     height: 400
 
@@ -17,14 +18,15 @@ ApplicationWindow {
 
         TextArea {
             id: source
-            width: 300
+            width: parent.width * 0.5
             text: file.content
         }
 
         WebView {
             id: output
-            width: 300
+            width: source.width
             // html: "<p>This is <b>HTML</b>."
+            loadHtml: "http://www.google.com"
         }
     }
 }
