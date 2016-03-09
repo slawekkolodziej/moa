@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"gopkg.in/qml.v1"
+	"github.com/russross/blackfriday"
 )
 
 func main() {
@@ -40,6 +41,7 @@ func watch(source qml.Object, target qml.Object) {
 }
 
 func compile(source qml.Object, target qml.Object) {
-	str := source.String("text")
-	target.Call("loadHtml", str)
+	input := source.String("text")
+	output := blackfriday.MarkdownBasic([]byte(input))
+	target.Call("loadHtml", string(output))
 }
