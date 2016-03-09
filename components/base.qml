@@ -10,22 +10,21 @@ ApplicationWindow {
     height: 400
 
     Item {
-        Component.onCompleted: console.log(file.content)
+        property alias text: source.text
     }
 
     SplitView {
         anchors.fill: parent
 
-        TextArea {
+        TextEdit {
             id: source
             objectName: "source"
             width: parent.width * 0.5
-            text: file.content
         }
 
         WebView {
-            id: output
-            objectName: "output"
+            id: target
+            objectName: "target"
             width: source.width
         }
     }

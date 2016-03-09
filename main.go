@@ -5,49 +5,41 @@ import (
 	"gopkg.in/qml.v1"
 )
 
-type File struct {
-	Content string
-}
-
-type Html struct {
-	html string
-	baseUrl string
-	unreachableUrl string
-}
-
-func (p *File) SetContent(content string) {
-	fmt.Println("Old content is", p.Content)
-	p.Content = content
-	fmt.Println("New content is", p.Content)
-}
-
 func main() {
-	err := qml.Run(run)
+	err := qml.Run(runApp)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 
-func run() error {
+func runApp() error {
 	engine := qml.NewEngine()
-	setValues(engine)
-	component, err := engine.LoadFile("components/base.qml")
+	winComponent, err := engine.LoadFile("components/base.qml")
+
 	if err != nil {
 		return err
 	}
-	win := component.CreateWindow(nil)
 
-	// source := win.ObjectByName("source")
-	output := win.ObjectByName("output")
+	win := winComponent.CreateWindow(nil)
+	source := win.ObjectByName("source")
+	target := win.ObjectByName("target")
 
-	output.Call("loadHtml", "<strong>hello!</strong>")
+	compile(source, target)
+	watch(source, target)
 
 	win.Show()
 	win.Wait()
+
 	return nil
 }
 
-func setValues(engine *qml.Engine) {
-	context := engine.Context()
-	context.SetVar("file", &File{Content: "Hello world!"})
+func watch(source qml.Object, target qml.Object) {
+	source.On("textChanged", func() {
+		compile(source, target)
+    })
+}
+
+func compile(source qml.Object, target qml.Object) {
+	str := source.String("text")
+	target.Call("loadHtml", str)
 }
