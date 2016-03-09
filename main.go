@@ -9,10 +9,16 @@ type File struct {
 	Content string
 }
 
+type Html struct {
+	html string
+	baseUrl string
+	unreachableUrl string
+}
+
 func (p *File) SetContent(content string) {
-        fmt.Println("Old content is", p.Content)
-        p.Content = content
-        fmt.Println("New content is", p.Content)
+	fmt.Println("Old content is", p.Content)
+	p.Content = content
+	fmt.Println("New content is", p.Content)
 }
 
 func main() {
@@ -27,9 +33,15 @@ func run() error {
 	setValues(engine)
 	component, err := engine.LoadFile("components/base.qml")
 	if err != nil {
-		return err;
+		return err
 	}
 	win := component.CreateWindow(nil)
+
+	// source := win.ObjectByName("source")
+	output := win.ObjectByName("output")
+
+	output.Call("loadHtml", "<strong>hello!</strong>")
+
 	win.Show()
 	win.Wait()
 	return nil
