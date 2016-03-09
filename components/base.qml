@@ -18,15 +18,15 @@ ApplicationWindow {
 
         TextArea {
             id: source
+            objectName: "source"
             width: parent.width * 0.5
             text: file.content
         }
 
         WebView {
             id: output
+            objectName: "output"
             width: source.width
-            // html: "<p>This is <b>HTML</b>."
-            loadHtml: "http://www.google.com"
         }
     }
 }
