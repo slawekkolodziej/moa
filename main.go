@@ -65,7 +65,7 @@ func watch(source qml.Object, target qml.Object, compile Compiler) {
 }
 
 func runCompiler() Compiler {
-	htmlDoc := template.Must(template.New("htmlDocument").Parse(`{{.Body}}`))
+	htmlDoc := template.Must(template.New("htmlDocument").Parse(htmlDocument))
 
 	return func(source qml.Object, target qml.Object) {
 		var buf bytes.Buffer
