@@ -1,11 +1,13 @@
 package main
 
 import (
-	"fmt"
-	"gopkg.in/qml.v1"
-	"github.com/russross/blackfriday"
-	"text/template"
+	"./webengine"
 	"bytes"
+	"fmt"
+	"github.com/russross/blackfriday"
+	"gopkg.in/qml.v1"
+	"os"
+	"text/template"
 )
 
 const htmlDocument = `
@@ -35,9 +37,13 @@ func main() {
 }
 
 func runApp() error {
+	webengine.Initialize()
 	engine := qml.NewEngine()
-	winComponent, err := engine.LoadFile("components/base.qml")
+	engine.On("quit", func() {
+		os.Exit(0)
+	})
 
+	winComponent, err := engine.LoadFile("components/base.qml")
 	if err != nil {
 		return err
 	}

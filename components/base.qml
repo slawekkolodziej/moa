@@ -1,17 +1,13 @@
-import QtQuick 2.2
+import QtQuick 2.5
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.0
-import QtWebKit 3.0
+import QtWebEngine 1.0
 
 ApplicationWindow {
     visible: true
     title: "Moa"
     width: 600
     height: 400
-
-    Item {
-        property alias text: source.text
-    }
 
     SplitView {
         anchors.fill: parent
@@ -22,10 +18,13 @@ ApplicationWindow {
             width: parent.width * 0.5
         }
 
-        WebView {
-            id: target
-            objectName: "target"
-            width: source.width
+        Item {
+            WebEngineView {
+                id: target
+                objectName: "target"
+                width: source.width
+                anchors.fill: parent
+            }
         }
     }
 }
