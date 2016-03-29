@@ -77,7 +77,7 @@ func runCompiler() Compiler {
 		var buf bytes.Buffer
 
 		input := source.String("text")
-		output := blackfriday.MarkdownBasic([]byte(input))
+		output := blackfriday.MarkdownCommon([]byte(input))
 
 		htmlDoc.Execute(&buf, &Document{"test", string(output)})
 		target.Call("loadHtml", buf.String())
