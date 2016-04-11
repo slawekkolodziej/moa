@@ -6,8 +6,8 @@ import QtWebEngine 1.0
 ApplicationWindow {
     visible: true
     title: "Moa"
-    width: 600
-    height: 400
+    width: 800
+    height: 600
 
     SplitView {
         anchors.fill: parent
