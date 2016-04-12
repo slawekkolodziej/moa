@@ -26,6 +26,7 @@ ApplicationWindow {
                 text: "Markdown Syntax"
             }
             MenuItem {
+                objectName: "menu:help:about"
                 text: "About"
             }
         }
