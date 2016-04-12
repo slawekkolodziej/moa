@@ -2,6 +2,7 @@ package main
 
 import (
 	"./editor"
+	"./menubar"
 	"./webengine"
 	"fmt"
 	"gopkg.in/qml.v1"
@@ -42,6 +43,7 @@ func runApp() error {
 
 	win := appComponent.CreateWindow(nil)
 
+	menubar.Initialize(win);
 	editor.Initialize(win, htmlDocument)
 
 	win.Show()
