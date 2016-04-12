@@ -53,7 +53,7 @@ func runApp() error {
 	source := win.ObjectByName("source")
 	target := win.ObjectByName("target")
 
-	compile := runCompiler()
+	compile := getCompiler()
 
 	compile(source, target)
 	watch(source, target, compile)
@@ -71,7 +71,7 @@ func watch(source qml.Object, target qml.Object, compile Compiler) {
     })
 }
 
-func runCompiler() Compiler {
+func getCompiler() Compiler {
 	doc := template.Must(template.New("htmlDocument").Parse(htmlDocument))
 
 	return func(source qml.Object, target qml.Object) {
