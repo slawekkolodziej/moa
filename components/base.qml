@@ -1,5 +1,5 @@
 import QtQuick 2.5
-import QtQuick.Controls 1.1
+import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.0
 import QtWebEngine 1.0
 
@@ -8,6 +8,28 @@ ApplicationWindow {
     title: "Moa"
     width: 800
     height: 600
+
+    MenuBar {
+        Menu {
+            title: "File"
+            MenuItem {
+                text: "Open..."
+            }
+            MenuItem {
+                text: "Save"
+            }
+        }
+
+        Menu {
+            title: "Help"
+            MenuItem {
+                text: "Markdown Syntax"
+            }
+            MenuItem {
+                text: "About"
+            }
+        }
+    }
 
     SplitView {
         anchors.fill: parent
