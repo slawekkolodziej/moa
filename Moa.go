@@ -43,7 +43,7 @@ func runApp() error {
 
 	win := appComponent.CreateWindow(nil)
 
-	menubar.Initialize(win);
+	menubar.Initialize(win, *engine);
 	editor.Initialize(win, htmlDocument)
 
 	win.Show()

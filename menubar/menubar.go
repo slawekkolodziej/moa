@@ -1,16 +1,19 @@
 package menubar
 
 import (
-	"fmt"
 	"gopkg.in/qml.v1"
 )
 
-func Initialize(win *qml.Window) {
-	about(win)
+func Initialize(win *qml.Window, engine qml.Engine) {
+	about(win, engine)
 }
 
-func about(win *qml.Window) {
+func about(win *qml.Window, engine qml.Engine) {
 	win.ObjectByName("menu:help:about").On("triggered", func() {
-		fmt.Println("Some useful stuff...")
+		aboutComponent, err := engine.LoadFile("components/about.qml")
+		if err == nil {
+			aboutWindow := aboutComponent.CreateWindow(nil)
+			aboutWindow.Show()
+		}
 	})
 }
