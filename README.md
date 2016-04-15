@@ -8,6 +8,8 @@
 
 	2.2. Running
 
+    2.3. Testing
+
 # 1. About
 
 My clone of Mou.app written with Go & QML.
@@ -56,3 +58,7 @@ To run the app simply type:
 ```
 go run main.go
 ```
+
+## 2.3 Testing
+
+Run `go test ./editor`
