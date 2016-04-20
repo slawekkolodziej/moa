@@ -15,10 +15,12 @@ type Document struct {
 	Body string
 }
 
-func Initialize(win *qml.Window, tpl string) {
+func Initialize(win *qml.Window, tpl string, content []byte) {
 	source := win.ObjectByName("source")
 	target := win.ObjectByName("target")
 	compile := getCompiler(tpl)
+
+	source.Set("text", string(content))
 
 	compile(source, target)
 	watch(source, target, compile)
