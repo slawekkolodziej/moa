@@ -1,11 +1,13 @@
 package menubar
 
 import (
+	"fmt"
 	"gopkg.in/qml.v1"
 )
 
 func Initialize(win *qml.Window, engine qml.Engine, filesChan chan string) {
-	file(win, engine, filesChan)
+	fileOpen(win, engine, filesChan)
+	fileSave(win, engine)
 	about(win, engine)
 }
 
@@ -19,7 +21,7 @@ func about(win *qml.Window, engine qml.Engine) {
 	})
 }
 
-func file(win *qml.Window, engine qml.Engine, filesChan chan string) {
+func fileOpen(win *qml.Window, engine qml.Engine, filesChan chan string) {
 	fileDialog := win.ObjectByName("fileDialog")
 
 	fileDialog.On("accepted", func() {
@@ -28,5 +30,11 @@ func file(win *qml.Window, engine qml.Engine, filesChan chan string) {
 
 	win.ObjectByName("menu:file:open").On("triggered", func() {
 		fileDialog.Call("open")
+	})
+}
+
+func fileSave(win *qml.Window, engine qml.Engine) {
+	win.ObjectByName("menu:file:save").On("triggered", func() {
+		fmt.Println("foo")
 	})
 }

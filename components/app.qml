@@ -18,6 +18,7 @@ ApplicationWindow {
                 text: "Open..."
             }
             MenuItem {
+                objectName: "menu:file:save"
                 text: "Save"
             }
         }
