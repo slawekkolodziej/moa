@@ -2,12 +2,12 @@ package main
 
 import (
 	"./editor"
-	"./menubar"
+	// "./menubar"
 	"./webengine"
 	"fmt"
 	"gopkg.in/qml.v1"
 	"io/ioutil"
-	"os"
+	// "os"
 	"path"
 )
 
@@ -23,34 +23,85 @@ const htmlDocument = `
 	</html>
 `
 
+const (
+	FILE_OPEN = iota
+	FILE_SAVE
+	FILE_CLOSE
+)
+
+type action struct {
+	file *string
+	kind int
+}
+
+
 func main() {
-	err := qml.Run(runApp)
+	err := qml.Run(app)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 
-func runApp() error {
-	files := make(chan string)
-
+func app() error {
 	engine := qml.NewEngine()
-	engine.On("quit", func() {
-		os.Exit(0)
-	})
+	// engine.On("quit", func() {
+	// 	os.Exit(0)
+	// })
 
 	webengine.Initialize()
 
-	go fileManager(*engine, files)
+	exit := make(chan error, 1)
+	actions := make(chan action)
+	files := make([]*string, 0)
 
-	err := openWindow(*engine, files, nil)
-	if err != nil {
-		return err
-	}
+	// go fileManager(*engine, files)
 
-	return nil
+	// err := openWindow(*engine, files, nil)
+	// if err != nil {
+	// 	return err
+	// }
+
+	go actionManager(*engine, actions, files, exit)
+
+	actions <- action{file: nil, kind: FILE_OPEN}
+
+	return <- exit
 }
 
-func openWindow(engine qml.Engine, files chan string, filePathPtr *string) error {
+func actionManager(engine qml.Engine, actions chan action, files []*string, exit chan error) {
+	for {
+		nextAction := <- actions
+
+		switch nextAction.kind {
+		case FILE_OPEN:
+			files = append(files, nextAction.file)
+			fmt.Println("action type: FILE_OPEN", nextAction.file)
+			openWindow(engine, nextAction.file)
+		case FILE_SAVE:
+			fmt.Println("action type: FILE_SAVE")
+		case FILE_CLOSE:
+			fmt.Println("action type: FILE_CLOSE")
+		}
+
+		fmt.Println("total files opened: ", len(files))
+
+		if (len(files) == 0) {
+			exit <- nil
+		}
+	}
+}
+
+// func fileManager(engine qml.Engine, files chan string) {
+// 	for {
+// 		filePath := <- files
+// 		err := openWindow(engine, files, &filePath)
+// 		if err != nil {
+// 			fmt.Println(err)
+// 		}
+// 	}
+// }
+
+func openWindow(engine qml.Engine, filePathPtr *string) error {
 	var fileName string
 	var filePath string
 	var fileContent []byte
@@ -85,17 +136,6 @@ func openWindow(engine qml.Engine, files chan string, filePathPtr *string) error
 	editor.Initialize(win, htmlDocument, fileContent)
 
 	win.Show()
-	win.Wait()
 
 	return nil
-}
-
-func fileManager(engine qml.Engine, files chan string) {
-	for {
-		filePath := <- files
-		err := openWindow(engine, files, &filePath)
-		if err != nil {
-			fmt.Println(err)
-		}
-	}
 }
