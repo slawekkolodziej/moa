@@ -3,12 +3,15 @@ package menubar
 import (
 	"fmt"
 	"gopkg.in/qml.v1"
+	"../types"
 )
 
-func Initialize(win *qml.Window, engine qml.Engine, filesChan chan string) {
-	fileOpen(win, engine, filesChan)
-	fileSave(win, engine)
-	about(win, engine)
+
+
+func Initialize(win *qml.Window, context types.AppContext) {
+	fileOpen(win, context.engine, context.actions)
+	fileSave(win, context.engine)
+	about(win, context.engine)
 }
 
 func about(win *qml.Window, engine qml.Engine) {
@@ -21,7 +24,7 @@ func about(win *qml.Window, engine qml.Engine) {
 	})
 }
 
-func fileOpen(win *qml.Window, engine qml.Engine, filesChan chan string) {
+func fileOpen(win *qml.Window, engine qml.Engine, actions chan string) {
 	fileDialog := win.ObjectByName("fileDialog")
 
 	fileDialog.On("accepted", func() {
