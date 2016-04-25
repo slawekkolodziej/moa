@@ -9,9 +9,9 @@ import (
 
 
 func Initialize(win *qml.Window, context types.AppContext) {
-	fileOpen(win, context.engine, context.actions)
-	fileSave(win, context.engine)
-	about(win, context.engine)
+	fileOpen(win, context)
+	fileSave(win, context.Engine)
+	about(win, context.Engine)
 }
 
 func about(win *qml.Window, engine qml.Engine) {
@@ -24,11 +24,15 @@ func about(win *qml.Window, engine qml.Engine) {
 	})
 }
 
-func fileOpen(win *qml.Window, engine qml.Engine, actions chan string) {
+func fileOpen(win *qml.Window, context types.AppContext) {
 	fileDialog := win.ObjectByName("fileDialog")
 
 	fileDialog.On("accepted", func() {
-		filesChan <- fileDialog.String("fileUrl")
+		fileUrl := fileDialog.String("fileUrl")
+		context.Actions <- types.Action{
+			File: &fileUrl,
+			Kind: types.FILE_OPEN,
+		}
 	})
 
 	win.ObjectByName("menu:file:open").On("triggered", func() {

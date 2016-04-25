@@ -11,13 +11,13 @@ const (
 )
 
 type AppContext struct {
-	engine qml.Engine
-	actions chan Action
-	exit chan error
-	files []*string
+	Engine qml.Engine
+	Actions chan Action
+	Exit chan error
+	Files []*string
 }
 
 type Action struct {
-	file *string
-	kind int
+	File *string
+	Kind int
 }
