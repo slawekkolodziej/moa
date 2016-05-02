@@ -2,22 +2,17 @@ package types
 
 import (
 	"gopkg.in/qml.v1"
-)
-
-const (
-	FILE_OPEN = iota
-	FILE_SAVE
-	FILE_CLOSE
+	"../filemanager"
 )
 
 type AppContext struct {
 	Engine qml.Engine
 	Actions chan Action
 	Exit chan error
-	Files []*string
+	Files filemanager.Map
 }
 
 type Action struct {
-	File *string
 	Kind int
+	Payload interface{}
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gopkg.in/qml.v1"
 	"../types"
+	"../filemanager"
 )
 
 
@@ -30,8 +31,8 @@ func fileOpen(win *qml.Window, context types.AppContext) {
 	fileDialog.On("accepted", func() {
 		fileUrl := fileDialog.String("fileUrl")
 		context.Actions <- types.Action{
-			File: &fileUrl,
-			Kind: types.FILE_OPEN,
+			Kind: filemanager.FILE_OPEN,
+			Payload: &fileUrl,
 		}
 	})
 

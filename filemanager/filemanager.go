@@ -1,5 +1,11 @@
 package filemanager
 
+import (
+	"path"
+	"io/ioutil"
+	"fmt"
+)
+
 const (
 	FILE_OPEN = iota
 	FILE_SAVE
@@ -9,6 +15,7 @@ const (
 type File struct {
 	Id uint32
 	Path *string
+	Name string
 }
 
 type Map struct {
@@ -17,25 +24,32 @@ type Map struct {
 }
 
 func New() Map {
-	var m Map
-	return m
-}
-
-func NewFile(path *string) File {
-	return File{
-		Path: path,
+	return Map{
+		lastId: 0,
+		files: make(map[uint32]File),
 	}
 }
 
-func (m Map) Add(path string) uint32 {
+func NewFile(filePath *string) File {
+	return File{
+		Path: filePath,
+	}
+}
+
+func (m Map) Open(filePath *string) File {
 	file := File{
 		Id: m.NextId(),
-		Path: &path,
+		Path: formatFilePath(filePath),
+	}
+
+	if (file.Path == nil) {
+		file.Name = "Untitled"
+	} else {
+		file.Name = path.Base(*file.Path)
 	}
 
 	m.files[file.Id] = file
-
-	return file.Id
+	return file
 }
 
 func (m Map) Remove(file File) {
@@ -49,4 +63,33 @@ func (m Map) NextId() uint32 {
 
 func (m Map) Total() int {
 	return len(m.files)
+}
+
+func (file File) Content() ([]byte, error) {
+	var content []byte
+	var err error
+
+	if file.Path == nil {
+		content = []byte("")
+	} else {
+		content, err = ioutil.ReadFile(*file.Path)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return content, nil
+}
+
+func formatFilePath(filePath *string) *string {
+	if (filePath != nil) {
+		tmp := *filePath
+		if tmp[:7] == "file://" {
+			fmt.Println("path: ", tmp)
+			tmp := tmp[7:]
+			filePath = &tmp
+		}
+	}
+
+	return filePath
 }
