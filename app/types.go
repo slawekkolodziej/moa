@@ -1,11 +1,11 @@
-package types
+package app
 
 import (
-	"gopkg.in/qml.v1"
 	"../filemanager"
+	"gopkg.in/qml.v1"
 )
 
-type AppContext struct {
+type Context struct {
 	Engine qml.Engine
 	Actions chan Action
 	Exit chan error

@@ -1,14 +1,13 @@
 package main
 
 import (
+	"./app"
 	"./editor"
 	"./filemanager"
 	"./menubar"
-	"./types"
 	"./webengine"
 	"fmt"
 	"gopkg.in/qml.v1"
-	// "os"
 )
 
 const htmlDocument = `
@@ -24,16 +23,18 @@ const htmlDocument = `
 `
 
 func main() {
-	err := qml.Run(app)
+	err := qml.Run(initialize)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 
-func app() error {
-	context := newContext()
+func initialize() error {
+	context := NewContext()
 
-	context.Actions <- types.Action{
+	go context.ActionManager()
+
+	context.Actions <- app.Action{
 		Kind: filemanager.FILE_OPEN,
 		Payload: nil,
 	}
@@ -41,81 +42,82 @@ func app() error {
 	return <- context.Exit
 }
 
-func actionManager(context types.AppContext) {
-	for {
-		nextAction := <- context.Actions
 
-		switch nextAction.Kind {
-		case filemanager.FILE_OPEN:
-			var filePath *string = nil
+// func NewContext() app.Context {
+// 	var context app.Context;
 
-			switch nextAction.Payload.(type) {
-			case *string:
-				filePath = nextAction.Payload.(*string)
-			default:
-				filePath = nil
-			}
+// 	context.Engine = *qml.NewEngine()
+// 	context.Actions = make(chan app.Action)
+// 	context.Exit = make(chan error, 1)
+// 	context.Files = filemanager.New()
 
-			file := context.Files.Open(filePath)
-			fmt.Println("Open window: ", file.Name, file.Path)
-			openWindow(context, file)
+// 	webengine.Initialize()
 
-		case filemanager.FILE_SAVE:
-			fmt.Println("action type: FILE_SAVE")
-		case filemanager.FILE_CLOSE:
-			fmt.Println("action type: FILE_CLOSE", nextAction.Payload, context.Files)
-		}
+// 	go context.ActionManager()
 
-		fmt.Println("total files opened: ", context.Files)
+// 	return context
+// }
 
-		if (context.Files.Total() == 0) {
-			context.Exit <- nil
-		}
-	}
-}
+// func (context app.Context) ActionManager {
+// 	for {
+// 		nextAction := <- context.Actions
 
-func openWindow(context types.AppContext, file filemanager.File) error {
-	appComponent, err := context.Engine.LoadFile("components/app.qml")
-	if err != nil {
-		return err
-	}
+// 		switch nextAction.Kind {
+// 		case filemanager.FILE_OPEN:
+// 			var filePath *string = nil
 
-	content, err := file.Content();
-	if err != nil {
-		return err
-	}
+// 			switch nextAction.Payload.(type) {
+// 			case *string:
+// 				filePath = nextAction.Payload.(*string)
+// 			default:
+// 				filePath = nil
+// 			}
 
-	fmt.Println("content: ", content)
+// 			file := context.Files.Open(filePath)
+// 			context.NewWindow(context, file)
 
-	win := appComponent.CreateWindow(nil)
-	menubar.Initialize(win, context);
-	editor.Initialize(win, htmlDocument, content)
+// 		case filemanager.FILE_SAVE:
+// 			fmt.Println("action type: FILE_SAVE")
 
-	win.Set("title", file.Name)
-	win.On("closing", func() {
-		// context.Actions <- types.Action{
-			// Payload: filemanager.File{
-			// 	Path: filePathPtr,
-			// },
-		// 	Kind: filemanager.FILE_CLOSE,
-		// }
-	})
-	win.Show()
+// 		case filemanager.FILE_CLOSE:
+// 			fmt.Println("action type: FILE_CLOSE", nextAction.Payload, context.Files)
+// 		}
 
-	return nil
-}
+// 		fmt.Println("total files opened: ", context.Files)
 
-func newContext() types.AppContext {
-	var context types.AppContext;
+// 		if (context.Files.Total() == 0) {
+// 			context.Exit <- nil
+// 		}
+// 	}
+// }
 
-	context.Engine = *qml.NewEngine()
-	context.Actions = make(chan types.Action)
-	context.Files = filemanager.New()
-	context.Exit = make(chan error, 1)
+// func (context app.Context) NewWindow(file filemanager.File) error {
+// 	appComponent, err := context.Engine.LoadFile("components/app.qml")
+// 	if err != nil {
+// 		return err
+// 	}
 
-	webengine.Initialize()
+// 	content, err := file.Content();
+// 	if err != nil {
+// 		return err
+// 	}
 
-	go actionManager(context)
+// 	fmt.Println("content: ", content)
 
-	return context
-}
+// 	win := appComponent.CreateWindow(nil)
+// 	menubar.Initialize(win, context);
+// 	editor.Initialize(win, htmlDocument, content)
+
+// 	win.Set("title", file.Name)
+// 	win.On("closing", func() {
+// 		// context.Actions <- Action{
+// 			// Payload: filemanager.File{
+// 			// 	Path: filePathPtr,
+// 			// },
+// 		// 	Kind: filemanager.FILE_CLOSE,
+// 		// }
+// 	})
+// 	win.Show()
+
+// 	return nil
+// }

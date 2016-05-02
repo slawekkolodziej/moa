@@ -3,7 +3,6 @@ package filemanager
 import (
 	"path"
 	"io/ioutil"
-	"fmt"
 )
 
 const (
@@ -85,7 +84,6 @@ func formatFilePath(filePath *string) *string {
 	if (filePath != nil) {
 		tmp := *filePath
 		if tmp[:7] == "file://" {
-			fmt.Println("path: ", tmp)
 			tmp := tmp[7:]
 			filePath = &tmp
 		}
