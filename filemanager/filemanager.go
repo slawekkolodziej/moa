@@ -1,11 +1,5 @@
 package filemanager
 
-import (
-	"fmt"
-	"gopkg.in/qml.v1"
-	"../types"
-)
-
 const (
 	FILE_OPEN = iota
 	FILE_SAVE
@@ -19,12 +13,18 @@ type File struct {
 
 type Map struct {
 	lastId uint32
-	files map[uint32]File,
+	files map[uint32]File
 }
 
 func New() Map {
 	var m Map
 	return m
+}
+
+func NewFile(path *string) File {
+	return File{
+		Path: path,
+	}
 }
 
 func (m Map) Add(path string) uint32 {
@@ -39,10 +39,14 @@ func (m Map) Add(path string) uint32 {
 }
 
 func (m Map) Remove(file File) {
-	delete(m.files, file.id)
+	delete(m.files, file.Id)
 }
 
 func (m Map) NextId() uint32 {
 	m.lastId += 1
 	return m.lastId
+}
+
+func (m Map) Total() int {
+	return len(m.files)
 }
