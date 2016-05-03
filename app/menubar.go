@@ -1,14 +1,12 @@
-package menubar
+package app
 
 import (
 	"../filemanager"
-	"../types/action"
-	"../app"
 	"fmt"
 	"gopkg.in/qml.v1"
 )
 
-func Initialize(win *qml.Window, context app.Context) {
+func (context Context) NewMenubar(win *qml.Window) {
 	fileOpen(win, context)
 	fileSave(win, context.Engine)
 	about(win, context.Engine)
@@ -24,12 +22,12 @@ func about(win *qml.Window, engine qml.Engine) {
 	})
 }
 
-func fileOpen(win *qml.Window, context app.Context) {
+func fileOpen(win *qml.Window, context Context) {
 	fileDialog := win.ObjectByName("fileDialog")
 
 	fileDialog.On("accepted", func() {
 		fileUrl := fileDialog.String("fileUrl")
-		context.Actions <- action.Action{
+		context.Actions <- Action{
 			Kind: filemanager.FILE_OPEN,
 			Payload: &fileUrl,
 		}

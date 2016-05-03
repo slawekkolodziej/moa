@@ -1,11 +1,9 @@
-package app
+package app;
 
 import (
 	"../editor"
 	"../filemanager"
-	"../menubar"
 	"../webengine"
-	"../types/action"
 	"fmt"
 	"gopkg.in/qml.v1"
 )
@@ -17,20 +15,21 @@ type Context struct {
 	Files filemanager.Map
 }
 
-func New() Context {
+func NewContext() Context {
 	var context Context;
 
 	context.Engine = *qml.NewEngine()
-	context.Actions = make(chan action.Action)
+	context.Actions = make(chan Action)
 	context.Exit = make(chan error, 1)
 	context.Files = filemanager.New()
 
 	webengine.Initialize()
 
-	// go context.ActionManager()
+	go context.ActionManager()
 
 	return context
 }
+
 
 func (context Context) ActionManager() {
 	for {
@@ -48,7 +47,7 @@ func (context Context) ActionManager() {
 			}
 
 			file := context.Files.Open(filePath)
-			context.NewWindow(context, file)
+			context.NewWindow(file)
 
 		case filemanager.FILE_SAVE:
 			fmt.Println("action type: FILE_SAVE")
@@ -76,14 +75,13 @@ func (context Context) NewWindow(file filemanager.File) error {
 		return err
 	}
 
-	fmt.Println("content: ", content)
-
 	win := appComponent.CreateWindow(nil)
-	// menubar.Initialize(win, context);
+	context.NewMenubar(win);
 	editor.Initialize(win, htmlDocument, content)
 
 	win.Set("title", file.Name)
 	win.On("closing", func() {
+		fmt.Println("closing file", file.Id)
 		// context.Actions <- Action{
 			// Payload: filemanager.File{
 			// 	Path: filePathPtr,

@@ -1,4 +1,4 @@
-package action
+package app
 
 type Action struct {
 	Kind int

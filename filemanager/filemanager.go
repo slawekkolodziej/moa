@@ -18,14 +18,14 @@ type File struct {
 }
 
 type Map struct {
-	lastId uint32
-	files map[uint32]File
+	LastId uint32
+	Files map[uint32]File
 }
 
 func New() Map {
 	return Map{
-		lastId: 0,
-		files: make(map[uint32]File),
+		LastId: 0,
+		Files: make(map[uint32]File),
 	}
 }
 
@@ -47,21 +47,21 @@ func (m Map) Open(filePath *string) File {
 		file.Name = path.Base(*file.Path)
 	}
 
-	m.files[file.Id] = file
+	m.Files[file.Id] = file
 	return file
 }
 
 func (m Map) Remove(file File) {
-	delete(m.files, file.Id)
+	delete(m.Files, file.Id)
 }
 
 func (m Map) NextId() uint32 {
-	m.lastId += 1
-	return m.lastId
+	m.LastId = m.LastId + 1
+	return m.LastId
 }
 
 func (m Map) Total() int {
-	return len(m.files)
+	return len(m.Files)
 }
 
 func (file File) Content() ([]byte, error) {
