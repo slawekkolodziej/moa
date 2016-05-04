@@ -3,6 +3,7 @@ package filemanager
 import (
 	"path"
 	"io/ioutil"
+	"sync/atomic"
 )
 
 const (
@@ -22,10 +23,10 @@ type Map struct {
 	Files map[uint32]File
 }
 
-func New() Map {
-	return Map{
+func New() *Map {
+	return &Map{
 		LastId: 0,
-		Files: make(map[uint32]File),
+		Files: map[uint32]File{},
 	}
 }
 
@@ -35,7 +36,7 @@ func NewFile(filePath *string) File {
 	}
 }
 
-func (m Map) Open(filePath *string) File {
+func (m *Map) Open(filePath *string) File {
 	file := File{
 		Id: m.NextId(),
 		Path: formatFilePath(filePath),
@@ -48,16 +49,16 @@ func (m Map) Open(filePath *string) File {
 	}
 
 	m.Files[file.Id] = file
+
 	return file
 }
 
-func (m Map) Remove(file File) {
+func (m *Map) Remove(file File) {
 	delete(m.Files, file.Id)
 }
 
-func (m Map) NextId() uint32 {
-	m.LastId = m.LastId + 1
-	return m.LastId
+func (m *Map) NextId() uint32 {
+	return atomic.AddUint32(&m.LastId, 1)
 }
 
 func (m Map) Total() int {

@@ -12,24 +12,22 @@ type Context struct {
 	Engine qml.Engine
 	Actions chan Action
 	Exit chan error
-	Files filemanager.Map
+	Files *filemanager.Map
 }
 
 func NewContext() Context {
-	var context Context;
-
-	context.Engine = *qml.NewEngine()
-	context.Actions = make(chan Action)
-	context.Exit = make(chan error, 1)
-	context.Files = filemanager.New()
+	context := Context{
+		Engine: *qml.NewEngine(),
+		Actions: make(chan Action, 1),
+		Exit: make(chan error, 1),
+		Files: filemanager.New(),
+	}
 
 	webengine.Initialize()
-
 	go context.ActionManager()
 
 	return context
 }
-
 
 func (context Context) ActionManager() {
 	for {
