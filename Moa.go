@@ -29,7 +29,5 @@ func initialize() error {
 		Payload: nil,
 	}
 
-	fmt.Println(context.Files)
-
 	return <- context.Exit
 }
