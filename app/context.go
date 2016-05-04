@@ -51,7 +51,7 @@ func (context Context) ActionManager() {
 			fmt.Println("action type: FILE_SAVE")
 
 		case filemanager.FILE_CLOSE:
-			fmt.Println("action type: FILE_CLOSE", nextAction.Payload, context.Files)
+			context.Files.Close(nextAction.Payload.(filemanager.File))
 		}
 
 		fmt.Println("total files opened: ", context.Files)
@@ -79,13 +79,10 @@ func (context Context) NewWindow(file filemanager.File) error {
 
 	win.Set("title", file.Name)
 	win.On("closing", func() {
-		fmt.Println("closing file", file.Id)
-		// context.Actions <- Action{
-			// Payload: filemanager.File{
-			// 	Path: filePathPtr,
-			// },
-		// 	Kind: filemanager.FILE_CLOSE,
-		// }
+		context.Actions <- Action{
+			Payload: file,
+			Kind: filemanager.FILE_CLOSE,
+		}
 	})
 	win.Show()
 

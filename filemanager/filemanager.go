@@ -53,7 +53,7 @@ func (m *Map) Open(filePath *string) File {
 	return file
 }
 
-func (m *Map) Remove(file File) {
+func (m *Map) Close(file File) {
 	delete(m.Files, file.Id)
 }
 
