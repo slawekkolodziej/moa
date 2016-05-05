@@ -48,7 +48,8 @@ func (context Context) ActionManager() {
 			context.NewWindow(file)
 
 		case filemanager.FILE_SAVE:
-			fmt.Println("action type: FILE_SAVE")
+			file := nextAction.Payload.(filemanager.File)
+			fmt.Println("action type: FILE_SAVE", file)
 
 		case filemanager.FILE_CLOSE:
 			context.Files.Close(nextAction.Payload.(filemanager.File))
@@ -74,7 +75,7 @@ func (context Context) NewWindow(file filemanager.File) error {
 	}
 
 	win := appComponent.CreateWindow(nil)
-	context.NewMenubar(win);
+	context.NewMenubar(win, file);
 	editor.Initialize(win, htmlDocument, content)
 
 	win.Set("title", file.Name)

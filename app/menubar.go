@@ -2,19 +2,18 @@ package app
 
 import (
 	"../filemanager"
-	"fmt"
 	"gopkg.in/qml.v1"
 )
 
-func (context Context) NewMenubar(win *qml.Window) {
+func (context Context) NewMenubar(win *qml.Window, file filemanager.File) {
 	fileOpen(win, context)
-	fileSave(win, context.Engine)
-	about(win, context.Engine)
+	fileSave(win, context, file, r)
+	about(win, context)
 }
 
-func about(win *qml.Window, engine qml.Engine) {
+func about(win *qml.Window, context Context) {
 	win.ObjectByName("menu:help:about").On("triggered", func() {
-		aboutComponent, err := engine.LoadFile("components/about.qml")
+		aboutComponent, err := context.Engine.LoadFile("components/about.qml")
 		if err == nil {
 			aboutWindow := aboutComponent.CreateWindow(nil)
 			aboutWindow.Show()
@@ -38,8 +37,11 @@ func fileOpen(win *qml.Window, context Context) {
 	})
 }
 
-func fileSave(win *qml.Window, engine qml.Engine) {
+func fileSave(win *qml.Window, context Context, file filemanager.File) {
 	win.ObjectByName("menu:file:save").On("triggered", func() {
-		fmt.Println("foo")
+		context.Actions <- Action{
+			Kind: filemanager.FILE_SAVE,
+			Payload: file,
+		}
 	})
 }
