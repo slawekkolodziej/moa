@@ -22,6 +22,7 @@ func initialize() error {
 
 	go context.ActionManager()
 
+	fmt.Println(filemanager.FILE_OPEN)
 	context.Actions <- app.Action{
 		Kind: filemanager.FILE_OPEN,
 		Payload: nil,
