@@ -15,7 +15,10 @@ func main() {
 }
 
 func initialize() error {
-	context := app.NewContext()
+	context, err := app.NewContext()
+	if err != nil {
+		panic(err)
+	}
 
 	go context.ActionManager()
 

@@ -7,7 +7,7 @@ import (
 
 func (context Context) NewMenubar(win *qml.Window, file filemanager.File) {
 	fileOpen(win, context)
-	fileSave(win, context, file, r)
+	fileSave(win, context, file)
 	about(win, context)
 }
 

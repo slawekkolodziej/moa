@@ -13,9 +13,10 @@ type Context struct {
 	Actions chan Action
 	Exit chan error
 	Files *filemanager.Map
+	MainWindow *qml.Window
 }
 
-func NewContext() Context {
+func NewContext() (Context, error) {
 	context := Context{
 		Engine: *qml.NewEngine(),
 		Actions: make(chan Action, 1),
@@ -23,10 +24,18 @@ func NewContext() Context {
 		Files: filemanager.New(),
 	}
 
+	mainComponent, err := context.Engine.LoadFile("components/main.qml")
+	if err != nil {
+		return context, err
+	}
+
+	context.MainWindow = mainComponent.CreateWindow(nil)
+	context.MainWindow.Show()
+
 	webengine.Initialize()
 	go context.ActionManager()
 
-	return context
+	return context, nil
 }
 
 func (context Context) ActionManager() {
@@ -74,7 +83,7 @@ func (context Context) NewWindow(file filemanager.File) error {
 		return err
 	}
 
-	win := appComponent.CreateWindow(nil)
+	win := appComponent.CreateWindow(context.MainWindow)
 	context.NewMenubar(win, file);
 	editor.Initialize(win, htmlDocument, content)
 
