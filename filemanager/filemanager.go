@@ -8,6 +8,7 @@ import (
 
 const (
 	FILE_OPEN = iota
+	FILE_OPEN_DIALOG
 	FILE_SAVE
 	FILE_CLOSE
 )

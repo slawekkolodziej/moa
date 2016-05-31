@@ -13,7 +13,7 @@ func (context Context) NewMenubar() (*qml.Object, error) {
 
 	menubar := component.Create(nil);
 
-	// fileOpen(menubar, context)
+	fileOpen(menubar, context)
 	// fileSave(menubar, context, file)
 	about(menubar, context)
 
@@ -31,18 +31,22 @@ func about(obj qml.Object, context Context) {
 }
 
 func fileOpen(obj qml.Object, context Context) {
-	fileDialog := obj.ObjectByName("fileDialog")
+	// fileDialog := obj.ObjectByName("fileDialog")
 
-	fileDialog.On("accepted", func() {
-		fileUrl := fileDialog.String("fileUrl")
-		context.Actions <- Action{
-			Kind: filemanager.FILE_OPEN,
-			Payload: &fileUrl,
-		}
-	})
+	// fileDialog.On("accepted", func() {
+	// 	fileUrl := fileDialog.String("fileUrl")
+	// 	context.Actions <- Action{
+	// 		Kind: filemanager.FILE_OPEN,
+	// 		Payload: &fileUrl,
+	// 	}
+	// })
 
 	obj.ObjectByName("menu:file:open").On("triggered", func() {
-		fileDialog.Call("open")
+		context.Actions <- Action{
+			Kind: filemanager.FILE_OPEN_DIALOG,
+			Payload: nil,
+		}
+		// fileDialog.Call("open")
 	})
 }
 
