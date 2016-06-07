@@ -9,21 +9,22 @@ import (
 )
 
 type Context struct {
-    Engine qml.Engine
+    active chan *filemanager.File
     Actions chan Action
+    Active *filemanager.File
+    Engine qml.Engine
     Exit chan error
     Files *filemanager.Map
     MenuBar *qml.Object
-    Windows []*qml.Window
 }
 
 func NewContext() (Context, error) {
     context := Context{
-        Engine: *qml.NewEngine(),
+        active: make(chan *filemanager.File, 1),
         Actions: make(chan Action, 1),
+        Engine: *qml.NewEngine(),
         Exit: make(chan error, 1),
         Files: filemanager.New(),
-        Windows: make([]*qml.Window, 0),
     }
 
     menubar, err := context.NewMenubar();
@@ -33,12 +34,19 @@ func NewContext() (Context, error) {
     context.MenuBar = menubar
 
     webengine.Initialize()
+    go context.SetActive()
     go context.ActionManager()
 
     return context, nil
 }
 
-func (context Context) ActionManager() {
+func (context *Context) SetActive() {
+    for {
+        context.Active = <- context.active
+    }
+}
+
+func (context *Context) ActionManager() {
     for {
         nextAction := <- context.Actions
 
@@ -54,28 +62,18 @@ func (context Context) ActionManager() {
             }
 
             file := context.Files.Open(filePath)
-            win, err := context.NewWindow(file)
+            _, err := context.NewWindow(file)
             if err != nil {
                 panic(err)
             }
-            context.Windows = append(context.Windows, win)
 
         case filemanager.FILE_SAVE:
-            file := nextAction.Payload.(filemanager.File)
+            file := nextAction.Payload.(*filemanager.File)
             fmt.Println("action type: FILE_SAVE", file)
 
         case filemanager.FILE_CLOSE:
             context.Files.Close(nextAction.Payload.(filemanager.File))
-
-        case filemanager.FILE_OPEN_DIALOG:
-            var win *qml.Window
-            // fmt.Println(len(context.Windows))
-            for i := 0; i < len(context.Windows); i++ {
-                win = context.Windows[i]
-                fmt.Println(win.Bool("active"))
-            }
         }
-
         fmt.Println("total files opened: ", context.Files)
 
         if (context.Files.Total() == 0) {
@@ -84,7 +82,7 @@ func (context Context) ActionManager() {
     }
 }
 
-func (context Context) NewWindow(file filemanager.File) (*qml.Window, error) {
+func (context *Context) NewWindow(file filemanager.File) (*qml.Window, error) {
     appComponent, err := context.Engine.LoadFile("components/app.qml")
     if err != nil {
         return nil, err
@@ -96,6 +94,7 @@ func (context Context) NewWindow(file filemanager.File) (*qml.Window, error) {
     }
 
     win := appComponent.CreateWindow(nil)
+    file.Window = win
     editor.Initialize(win, htmlDocument, content)
 
     win.Set("title", file.Name)
@@ -105,7 +104,29 @@ func (context Context) NewWindow(file filemanager.File) (*qml.Window, error) {
             Kind: filemanager.FILE_CLOSE,
         }
     })
+    win.On("activeChanged", func() {
+        fmt.Println("window isActive:", win.Bool("active"))
+        if win.Bool("active") == true {
+            fmt.Println("setting is active...")
+            context.active <- &file
+        }
+    })
+    fileDialog := win.ObjectByName("fileDialog")
+    fileDialog.On("accepted", func() {
+        fileUrl := fileDialog.String("fileUrl")
+        context.Actions <- Action{
+            Kind: filemanager.FILE_OPEN,
+            Payload: &fileUrl,
+        }
+    })
     win.Show()
+
+    fmt.Println(context.Active)
+    if context.Active == nil {
+        fmt.Println("setting Active...")
+        context.active <- &file
+    }
+    fmt.Println(context.Active)
 
     return win, nil
 }

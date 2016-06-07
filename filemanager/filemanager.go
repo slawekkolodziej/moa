@@ -1,8 +1,9 @@
 package filemanager
 
 import (
-	"path"
+	"gopkg.in/qml.v1"
 	"io/ioutil"
+	"path"
 	"sync/atomic"
 )
 
@@ -17,6 +18,7 @@ type File struct {
 	Id uint32
 	Path *string
 	Name string
+	Window *qml.Window
 }
 
 type Map struct {
