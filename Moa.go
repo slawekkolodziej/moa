@@ -3,14 +3,13 @@ package main
 import (
 	"./app"
 	"./filemanager"
-	"fmt"
 	"gopkg.in/qml.v1"
 )
 
 func main() {
 	err := qml.Run(initialize)
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 }
 
@@ -21,12 +20,6 @@ func initialize() error {
 	}
 
 	go context.ActionManager()
-
-	fmt.Println(filemanager.FILE_OPEN)
-	context.Actions <- app.Action{
-		Kind: filemanager.FILE_OPEN,
-		Payload: nil,
-	}
 
 	context.Actions <- app.Action{
 		Kind: filemanager.FILE_OPEN,

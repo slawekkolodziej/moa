@@ -69,7 +69,11 @@ func (context *Context) ActionManager() {
 
         case filemanager.FILE_SAVE:
             file := nextAction.Payload.(*filemanager.File)
-            fmt.Println("action type: FILE_SAVE", file)
+            markdown := file.Window.ObjectByName("source").String("text")
+            err := file.Save(markdown)
+            if err != nil {
+                panic(err)
+            }
 
         case filemanager.FILE_CLOSE:
             context.Files.Close(nextAction.Payload.(filemanager.File))

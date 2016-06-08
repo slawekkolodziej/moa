@@ -1,7 +1,9 @@
 package filemanager
 
 import (
+	"fmt"
 	"gopkg.in/qml.v1"
+	"os"
 	"io/ioutil"
 	"path"
 	"sync/atomic"
@@ -82,6 +84,25 @@ func (file File) Content() ([]byte, error) {
 	}
 
 	return content, nil
+}
+
+func (file File) Save(content string) (error) {
+	if file.Path == nil {
+		fmt.Println("Open 'save file' dialog")
+	} else {
+		f, err := os.Create(*file.Path)
+		if err != nil {
+			return err
+		}
+
+		_, err = f.WriteString(content)
+		if err != nil {
+			return err
+		}
+
+		f.Close()
+	}
+	return nil
 }
 
 func formatFilePath(filePath *string) *string {
