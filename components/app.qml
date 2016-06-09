@@ -11,15 +11,16 @@ ApplicationWindow {
     height: 600
 
     FileDialog {
-        id: fileDialog
-        objectName: "fileDialog"
-        title: "Please choose a file"
-        onAccepted: {
-            console.log("You chose: " + fileDialog.fileUrls)
-        }
-        onRejected: {
-            console.log("Canceled")
-        }
+        id: openFile
+        objectName: "openFile"
+        title: "Choose a file"
+    }
+
+    FileDialog {
+        id: saveFile
+        objectName: "saveFile"
+        title: "Choose a file"
+        selectExisting: false
     }
 
     SplitView {
