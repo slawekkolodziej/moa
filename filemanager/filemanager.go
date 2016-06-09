@@ -1,7 +1,6 @@
 package filemanager
 
 import (
-	"fmt"
 	"gopkg.in/qml.v1"
 	"os"
 	"io/ioutil"
@@ -44,7 +43,7 @@ func NewFile(filePath *string) File {
 func (m *Map) Open(filePath *string) File {
 	file := File{
 		Id: m.NextId(),
-		Path: formatFilePath(filePath),
+		Path: urlToPath(filePath),
 	}
 
 	if (file.Path == nil) {
@@ -87,10 +86,10 @@ func (file File) Content() ([]byte, error) {
 }
 
 func (file File) Save(content string) (error) {
+	f, err := os.Create(*file.Path)
 	if file.Path == nil {
-		fmt.Println("Open 'save file' dialog")
+		panic("No file path set!")
 	} else {
-		f, err := os.Create(*file.Path)
 		if err != nil {
 			return err
 		}
@@ -105,7 +104,11 @@ func (file File) Save(content string) (error) {
 	return nil
 }
 
-func formatFilePath(filePath *string) *string {
+func (file *File) SetPath(fileUrl *string) {
+	file.Path = urlToPath(fileUrl)
+}
+
+func urlToPath(filePath *string) *string {
 	if (filePath != nil) {
 		tmp := *filePath
 		if tmp[:7] == "file://" {
