@@ -32,7 +32,7 @@ func about(obj qml.Object, context *Context) {
 
 func fileOpen(obj qml.Object, context *Context) {
 	obj.ObjectByName("menu:file:open").On("triggered", func() {
-		fileDialog := context.Active.Window.ObjectByName("fileDialog")
+		fileDialog := context.Active.Window.ObjectByName("openFile")
 		fileDialog.Call("open")
 	})
 }

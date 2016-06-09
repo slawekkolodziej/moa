@@ -4,7 +4,6 @@ import (
     "../editor"
     "../filemanager"
     "../webengine"
-    "fmt"
     "gopkg.in/qml.v1"
 )
 
@@ -52,33 +51,14 @@ func (context *Context) ActionManager() {
 
         switch nextAction.Kind {
         case filemanager.FILE_OPEN:
-            var filePath *string = nil
-
-            switch nextAction.Payload.(type) {
-            case *string:
-                filePath = nextAction.Payload.(*string)
-            default:
-                filePath = nil
-            }
-
-            file := context.Files.Open(filePath)
-            _, err := context.NewWindow(file)
-            if err != nil {
-                panic(err)
-            }
+            nextAction.Open(context)
 
         case filemanager.FILE_SAVE:
-            file := nextAction.Payload.(*filemanager.File)
-            markdown := file.Window.ObjectByName("source").String("text")
-            err := file.Save(markdown)
-            if err != nil {
-                panic(err)
-            }
+            nextAction.Save(context)
 
         case filemanager.FILE_CLOSE:
-            context.Files.Close(nextAction.Payload.(filemanager.File))
+            nextAction.Close(context)
         }
-        fmt.Println("total files opened: ", context.Files)
 
         if (context.Files.Total() == 0) {
             context.Exit <- nil
@@ -109,13 +89,11 @@ func (context *Context) NewWindow(file filemanager.File) (*qml.Window, error) {
         }
     })
     win.On("activeChanged", func() {
-        fmt.Println("window isActive:", win.Bool("active"))
         if win.Bool("active") == true {
-            fmt.Println("setting is active...")
             context.active <- &file
         }
     })
-    fileDialog := win.ObjectByName("fileDialog")
+    fileDialog := win.ObjectByName("openFile")
     fileDialog.On("accepted", func() {
         fileUrl := fileDialog.String("fileUrl")
         context.Actions <- Action{
@@ -125,12 +103,9 @@ func (context *Context) NewWindow(file filemanager.File) (*qml.Window, error) {
     })
     win.Show()
 
-    fmt.Println(context.Active)
     if context.Active == nil {
-        fmt.Println("setting Active...")
         context.active <- &file
     }
-    fmt.Println(context.Active)
 
     return win, nil
 }
