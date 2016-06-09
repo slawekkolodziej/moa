@@ -14,7 +14,6 @@ ApplicationWindow {
         id: fileDialog
         objectName: "fileDialog"
         title: "Please choose a file"
-        folder: shortcuts.home
         onAccepted: {
             console.log("You chose: " + fileDialog.fileUrls)
         }
