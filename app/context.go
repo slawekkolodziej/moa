@@ -4,7 +4,7 @@ import (
     "../editor"
     "../filemanager"
     "../webengine"
-    "gopkg.in/qml.v1"
+    "github.com/limetext/qml-go"
 )
 
 type Context struct {

@@ -2,7 +2,7 @@ package app
 
 import (
 	"../filemanager"
-	"gopkg.in/qml.v1"
+	"github.com/limetext/qml-go"
 )
 
 func (context *Context) NewMenubar() (*qml.Object, error) {

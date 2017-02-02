@@ -3,7 +3,7 @@ package editor
 import (
 	"bytes"
 	"github.com/russross/blackfriday"
-	"gopkg.in/qml.v1"
+	"github.com/limetext/qml-go"
 	"regexp"
 	"text/template"
 )

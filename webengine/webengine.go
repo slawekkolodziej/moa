@@ -9,7 +9,7 @@ package webengine
 import "C"
 
 import (
-	"gopkg.in/qml.v1"
+	"github.com/limetext/qml-go"
 )
 
 // Initializes the WebEngine extension.

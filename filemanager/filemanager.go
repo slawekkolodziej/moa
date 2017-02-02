@@ -1,7 +1,7 @@
 package filemanager
 
 import (
-	"gopkg.in/qml.v1"
+	"github.com/limetext/qml-go"
 	"os"
 	"io/ioutil"
 	"path"

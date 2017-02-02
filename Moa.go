@@ -3,7 +3,7 @@ package main
 import (
 	"./app"
 	"./filemanager"
-	"gopkg.in/qml.v1"
+	"github.com/limetext/qml-go"
 )
 
 func main() {
