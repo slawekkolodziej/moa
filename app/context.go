@@ -67,7 +67,7 @@ func (context *Context) ActionManager() {
 }
 
 func (context *Context) NewWindow(file filemanager.File) (*qml.Window, error) {
-    appComponent, err := context.Engine.LoadFile("components/app.qml")
+    appComponent, err := context.Engine.LoadString("", componentsAppQml)
     if err != nil {
         return nil, err
     }

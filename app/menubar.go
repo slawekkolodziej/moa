@@ -6,7 +6,7 @@ import (
 )
 
 func (context *Context) NewMenubar() (*qml.Object, error) {
-	component, err := context.Engine.LoadFile("components/menubar.qml")
+	component, err := context.Engine.LoadString("", componentsMenubarQml)
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +22,7 @@ func (context *Context) NewMenubar() (*qml.Object, error) {
 
 func about(obj qml.Object, context *Context) {
 	obj.ObjectByName("menu:help:about").On("triggered", func() {
-		aboutComponent, err := context.Engine.LoadFile("components/about.qml")
+		aboutComponent, err := context.Engine.LoadString("", componentsAboutQml)
 		if err == nil {
 			aboutWindow := aboutComponent.CreateWindow(nil)
 			aboutWindow.Show()
