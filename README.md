@@ -56,9 +56,17 @@ To get environement ready on OSX you can simply type the following commands:
 To run the app simply type:
 
 ```
-go run main.go
+make run
 ```
 
 ## 2.3 Testing
 
 Run `go test ./editor`
+
+# 3. Release
+
+To build an app run `make prepare` once (it is going to call qmake), then you just have to type:
+
+```
+make build
+```
