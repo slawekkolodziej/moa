@@ -1,1 +1,4 @@
 moa.app
+app/components.go
+Makefile.build
+.qmake.stash
