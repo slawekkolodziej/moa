@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+pathPartRe = /\/|\./ # split on / or .
+project_dir = File.dirname(File.dirname(__FILE__))
+components_file = "app/components.go";
+
+Dir.chdir("#{project_dir}/components")
+
+components_fp = File.open("../#{components_file}", "w")
+components_fp.write("package app\n\n")
+
+Dir.glob("./**/*.qml").map do |path|
+  variable_name = 'components' + path[2..-1].split(pathPartRe).map(&:capitalize).join
+
+  component = File.open(path, "rb")
+  components_fp.write("const #{variable_name} = `\n#{component.read}`\n\n")
+end
+
+components_fp.close
